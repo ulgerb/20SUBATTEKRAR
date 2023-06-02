@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block css %}
+   
+{% endblock css %}
+   
+
+{% block main %}
+   <section class="vh-100" style="background-color: #2779e2;">
+      <div class="container h-100">
+         <div class="row d-flex justify-content-center align-items-center h-100">
+            <form method="POST" class="col-xl-9" enctype="multipart/form-data">
+               {% csrf_token %}
+   
+               <h1 class="text-white mb-4">Ürün Ekle</h1>
+   
+               <div class="card" style="border-radius: 15px;">
+                  <div class="card-body">
+   
+                     <div class="row align-items-center pt-4 pb-3">
+                        <div class="col-md-3 ps-5">
+   
+                           <h6 class="mb-0">Ürün Adı</h6>
+   
+                        </div>
+                        <div class="col-md-9 pe-5">
+   
+                           <input type="text" name="title" class="form-control form-control-lg" />
+   
+                        </div>
+                     </div>
+   
+                     <hr class="mx-n3">
+   
+                     <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+   
+                           <h6 class="mb-0">Ürün Fiyatı</h6>
+   
+                        </div>
+                        <div class="col-md-9 pe-5">
+   
+                           <input type="number" name="price" class="form-control form-control-lg" placeholder="" />
+   
+                        </div>
+                     </div>
+                     <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+   
+                           <h6 class="mb-0">Ürün Stok</h6>
+   
+                        </div>
+                        <div class="col-md-9 pe-5">
+   
+                           <input type="number" name="stok" class="form-control form-control-lg" placeholder="" />
+   
+                        </div>
+                     </div>
+   
+                     <hr class="mx-n3">
+   
+                     <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+   
+                           <h6 class="mb-0">Ürün İçeriği</h6>
+   
+                        </div>
+                        <div class="col-md-9 pe-5">
+   
+                           <textarea class="form-control" name="text" rows="3" placeholder="Message sent to the employer"></textarea>
+   
+                        </div>
+                     </div>
+   
+                     <hr class="mx-n3">
+   
+                     <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+   
+                           <h6 class="mb-0">Ürün Resmi</h6>
+   
+                        </div>
+                        <div class="col-md-9 pe-5">
+   
+                           <input class="form-control form-control-lg" name="image" id="formFileLg" type="file" />
+                           <div class="small text-muted mt-2"></div>
+   
+                        </div>
+                     </div>
+   
+                     <hr class="mx-n3">
+   
+                     <div class="px-5 py-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Ürünü Oluştur</button>
+                     </div>
+   
+                  </div>
+               </div>
+   
+            </form>
+         </div>
+      </div>
+   </section>
+{% endblock main %}
+   

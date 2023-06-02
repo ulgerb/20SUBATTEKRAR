@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block css %}
+   <style>
+      .table th{
+         border: 1px  solid #00000015;
+         border-bottom: 0px;
+      }
+   </style>
+{% endblock css %}
+   
+
+
+{% block main %}
+   <div class="container">
+      <div class="row justify-content-center my-5">
+         <div class="col-10">
+            <table class="table align-middle mb-0 bg-white border">
+               <thead class="bg-light">
+                  <tr>
+                     <th>id</th>
+                     <th>Ürün</th>
+                     <th>Stok</th>
+                     <th>Fiyat</th>
+                     <th>Tarih</th>
+                     <th>Edit</th>
+                     <th>Del</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  
+                  {% for i in products %}
+                  <tr>
+                     <td>{{ forloop.counter }}</td>
+                     <td>
+                        <div class="d-flex align-items-center">
+                           <img src="{{ i.image.url }}" alt="" style="width: 45px; height: 45px"
+                              class="" />
+                           <div class="ms-3">
+                              <p class="fw-bold mb-1">{{ i.title }}</p>
+                           </div>
+                        </div>
+                     </td>
+                     <td>
+                        <p class="fw-normal mb-1">{{ i.stok }}</p>
+                     </td>
+                     <td>
+                        <span class="badge badge-success rounded-pill d-inline fs-6">₺{{ i.price }}</span>
+                     </td>
+                     <td>{{ i.date_now }}</td>
+                     <td>
+                        <button type="button" class="btn btn-primary btn-sm btn-rounded" data-mdb-toggle="modal" data-mdb-target="#editmodal{{ i.id }}">
+                           Edit
+                        </button>
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="editmodal{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                           <div class="modal-dialog modal-xl">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">{{ i.title }} ürünü düzenle</h5>
+                                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <form method="POST" class="col-xl-9 w-100 h-100" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                       {% csrf_token %}
+                                       <div class="card" style="border-radius: 15px;">
+                                          <div class="card-body">
+                                             <input type="hidden" name="productid" value="{{ i.id }}">
+                                             <div class="row align-items-center pt-4 pb-3">
+                                                <div class="col-md-3 ps-5">
+                                                   <h6 class="mb-0">Ürün Adı</h6>
+                                                </div>
+                                                <div class="col-md-9 pe-5">
+                                                   <input type="text" name="title" value="{{ i.title }}" class="form-control form-control-lg" />
+                                                </div>
+                                             </div>
+                                             <hr class="mx-n3">
+                                             <div class="row align-items-center py-3">
+                                                <div class="col-md-3 ps-5">
+                                                   <h6 class="mb-0">Ürün Fiyatı</h6>
+                                                </div>
+                                                <div class="col-md-9 pe-5">
+                                                   <input type="number" name="price" value='{{ i.price|add:0 }}' class="form-control form-control-lg" placeholder="" />
+                                                </div>
+                                             </div>
+                                             <div class="row align-items-center py-3">
+                                                <div class="col-md-3 ps-5">
+                                                   <h6 class="mb-0">Ürün Stok</h6>
+                                                </div>
+                                                <div class="col-md-9 pe-5">
+                                                   <input type="number" name="stok" value="{{ i.stok }}" class="form-control form-control-lg" placeholder="" />
+                                                </div>
+                                             </div>
+                                    
+                                             <hr class="mx-n3">
+                                    
+                                             <div class="row align-items-center py-3">
+                                                <div class="col-md-3 ps-5">
+                                    
+                                                   <h6 class="mb-0">Ürün İçeriği</h6>
+                                    
+                                                </div>
+                                                <div class="col-md-9 pe-5">
+                                    
+                                                   <textarea class="form-control" name="text" rows="3"
+                                                      placeholder="Message sent to the employer">{{ i.text }}</textarea>
+                                    
+                                                </div>
+                                             </div>
+                                    
+                                             <hr class="mx-n3">
+                                    
+                                             <div class="row align-items-center py-3">
+                                                <div class="col-md-3 ps-5">
+                                    
+                                                   <h6 class="mb-0">Ürün Resmi</h6>
+                                    
+                                                </div>
+                                                <div class="col-md-9 pe-5">
+                                    
+                                                   <input class="form-control form-control-lg" name="image" id="formFileLg" type="file" />
+                                                   <div class="small text-muted mt-2"></div>
+                                    
+                                                </div>
+                                             </div>
+                                    
+                                             <hr class="mx-n3">
+                                    
+                                             <div class="px-5 py-4">
+                                                <button type="submit" class="btn btn-primary btn-lg">Düzenle</button>
+                                             </div>
+                                    
+                                          </div>
+                                       </div>
+                                    
+                                    </div>
+                                   
+                                 </form>
+                              </div>
+                           </div>
+                        </div>
+                     </td>
+                     <td>
+                        <a type="button" class="btn btn-danger btn-sm btn-rounded" data-mdb-toggle="modal" data-mdb-target="#delmodal{{ i.id }}">
+                           Del
+                        </a>
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="delmodal{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                           <div class="modal-dialog">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">{{ i.title }} ürünü slmek istiyor musun?</h5>
+                                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-footer">
+                                    <a href="/delproduct/{{ i.id }}" type="button" class="btn btn-danger">Evet</a>
+                                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Hayır</button>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </td>
+                  </tr>
+                  {% endfor %}
+                     
+                  
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+{% endblock main %}
+   

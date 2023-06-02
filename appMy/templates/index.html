@@ -60,11 +60,33 @@
    <!-- Carousel wrapper -->
    <hr>
    <div class="row">
+      <ol>
+         <li>form methodu post yada get</li>
+         <li>post ise csrf token</li>
+         <li>inputlarda name</li>
+         <li>buttonda submit</li>
+      </ol>
       <!-- CARDS -->
-      <div class="col-9 row">
-         
+      <div class="col-9 row g-3">
+         <div class="d-flex justify-content-end my-3">
+            <form class="d-flex gap-2" method="GET">
+               <select class="form-select" name="filter" id="">
+                  <option value="1">Düşük Fiyattan Sırala</option>
+                  <option value="2">Yüksek Fiyattan Sırala</option>
+                  <option value="3">Yeni Ürünler</option>
+                  <option value="4">A'dan Z'ye sırala</option>
+                  <option value="5">Z'den A'ya sırala</option>
+               </select>
+               <button class="btn" type="submit">Sırala</button>
+            </form>
+            <a href="/col/12" class="btn">1</a>
+            <a href="/col/6" class="btn">2</a>
+            <a href="/col/4" class="btn">3</a>
+            <a href="/col/3" class="btn">4</a>
+            <a href="/col/2" class="btn">6</a>
+         </div>
          {% for i in products %}
-         <div class="col-4">
+         <div class="col-{{ col }}">
             <div class="card">
                <img style="width: 100%; height: 300px; object-fit: contain;" src="{{ i.image.url }}" class="card-img-top"
                   alt="Fissure in Sandstone" />

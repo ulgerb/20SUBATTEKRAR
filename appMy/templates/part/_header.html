@@ -2,7 +2,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
    <!-- Container wrapper -->
-   <div class="container-fluid">
+   <div class="container" style="min-height: 8vh;">
       <!-- Toggle button -->
       <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,19 +19,13 @@
          <!-- Left links -->
          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-               <a class="nav-link" href="#">Dashboard</a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" href="#">Team</a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" href="#">Projects</a>
+               <a class="nav-link" href="/">Anasayfa</a>
             </li>
          </ul>
          <!-- Left links -->
       </div>
-      <!-- Collapsible wrapper -->
-
+      
+      {% if request.user.is_authenticated %}
       <!-- Right elements -->
       <div class="d-flex align-items-center">
          <!-- Icon -->
@@ -70,15 +64,27 @@
                   <a class="dropdown-item" href="#">My profile</a>
                </li>
                <li>
-                  <a class="dropdown-item" href="#">Settings</a>
+                  <a class="dropdown-item" href="/myproduct">Ürünlerimi Göster</a>
                </li>
                <li>
-                  <a class="dropdown-item" href="#">Logout</a>
+                  <a class="dropdown-item" href="/addproduct">Ürün Ekle</a>
+               </li>
+               <li>
+                  <a class="dropdown-item" href="/logout">Logout</a>
                </li>
             </ul>
          </div>
       </div>
       <!-- Right elements -->
+         
+      {% else %}
+      <!-- Collapsible wrapper -->
+      <div class="d-flex gap-3">
+         <a href="/login" class="btn btn-primary">Giriş</a>
+         <a href="/register" class="btn btn-primary">Kaydol</a>
+      </div>
+      {% endif %}
+         
    </div>
    <!-- Container wrapper -->
 </nav>

@@ -22,10 +22,15 @@ from appMy.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', indexPage, name='indexPage'),
+    path('col/<col>', indexPage, name='indexPage'),
     path('detay/<id>', detailPage, name='detailPage'),
     
     # USER
-    path('login', loginUser, name='loginUser'),
-    path('register', registerUser, name='registerUser'),
+    path('myproduct', myProduct, name='myProduct'),
+    path('delproduct/<id>', delProduct, name='delProduct'),
+    path('addproduct', addProduct, name='addProduct'),
+    path('login', loginUser, name='loginUser'), # giriş
+    path('logout', logoutUser, name='logoutUser'), # çıkış
+    path('register', registerUser, name='registerUser'), # kayıt
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
