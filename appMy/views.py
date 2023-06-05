@@ -2,11 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from django.contrib import messages
+from django.db.models import Count
 
 def indexPage(request, col=4):
+   category_count = Product.objects.values('category__title','category__slug').annotate(product=Count('title'))
+   print(category_count)
+   categorys = Category.objects.all()
    products = Product.objects.all() # Hepsini getir (liste bazlıdır) (for) []
    # products = Product.objects.filter() # (category=telefon) (liste bazlıdır) (for) []
    # products = Product.objects.get() # tek obje 
+      
+   if request.method == "GET":
+      submit = request.GET.get("submit") # ""
+      if submit:
+         products = products.filter(category__slug = submit)
+   
 
    if request.method == "GET":
       filter_product = request.GET.get("filter")
@@ -20,12 +31,12 @@ def indexPage(request, col=4):
          products = products.order_by("title")
       elif filter_product == "5":
          products = products.order_by("-title")
-         
-      
    
    context = { # sayfa içerisine bilgileri gönderir
       "products":products,
       "col":col,
+      "categorys": categorys,
+      "category_count": category_count,
    }
    return render(request, 'index.html', context)
 
@@ -77,18 +88,23 @@ def delProduct(request,id=None):
    return redirect("myProduct")
 
 def addProduct(request):
+   categorys = Category.objects.all()
    if request.method == "POST":
       title = request.POST.get("title")
       price = request.POST.get("price")
       stok = request.POST.get("stok")
       text = request.POST.get("text")
+      slugcate = request.POST.get("category") # telefon
       image = request.FILES.get("image")
+      category = categorys.get(slug=slugcate) # id=5 slug=telefon
       
-      product = Product(title=title, price=price, stok=stok, text=text,image=image, user=request.user)
+      product = Product(title=title, price=price, stok=stok,category=category, text=text,image=image, user=request.user)
       product.save()
       return redirect("indexPage")
    
-   context = {}
+   context = {
+       "categorys": categorys,
+   }
    return render(request, 'user/add-product.html', context)
 
 def loginUser(request):
@@ -101,8 +117,12 @@ def loginUser(request):
 
       if user is not None:
          login(request,user)
+         messages.success(request, 'Hoşgeldiniz '+ user.username)
          return redirect("indexPage")
-      
+      else:
+         messages.warning(request, 'Kullanıcı adı veya şifre yanlış!!')
+         return redirect("loginUser")
+         
    context = {}
    return render(request,'user/login.html',context)
 
@@ -121,8 +141,18 @@ def registerUser(request):
             if not User.objects.filter(email=email).exists():
                user = User.objects.create_user(username = username, password=password1, email=email,first_name=fname, last_name=lname )
                user.save()
+               messages.success(request, 'Kaydınız başarıyla oluşturuldu..')
                return redirect("loginUser")
-               
+            else:
+               messages.warning(request, 'Bu mail zaten kullanılıyor!!')
+               return redirect("registerUser")
+         else:
+            messages.warning(request, 'Bu kullanıcı adı daha önceden alınmış!!')
+            return redirect("registerUser")
+      else:
+         messages.warning(request, 'Şifreler aynı değil!!')
+         return redirect("registerUser")
+      
    context = {}
    return render(request,'user/register.html',context)
 

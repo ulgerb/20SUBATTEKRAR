@@ -66,9 +66,10 @@
          <li>inputlarda name</li>
          <li>buttonda submit</li>
       </ol>
-      <!-- CARDS -->
-      <div class="col-9 row g-3">
-         <div class="d-flex justify-content-end my-3">
+      
+      <div class="col-9">
+         <!-- SIRALAMA -->
+         <div class="d-flex justify-content-start m-3">
             <form class="d-flex gap-2" method="GET">
                <select class="form-select" name="filter" id="">
                   <option value="1">Düşük Fiyattan Sırala</option>
@@ -85,6 +86,11 @@
             <a href="/col/3" class="btn">4</a>
             <a href="/col/2" class="btn">6</a>
          </div>
+      </div>
+      <hr>
+      <div class="col-9 row g-3 mt-0">
+         <h3 class="mt-0 ms-3">Tüm Ürünler</h3>
+         <!-- CARDS -->
          {% for i in products %}
          <div class="col-{{ col }}">
             <div class="card">
@@ -100,6 +106,27 @@
          </div>
          {% endfor %}
             
+      </div>
+      <div class="col">
+         <h3 style="padding: 0px 0px 0px 0px;">Kategoriler</h3>
+         <ol class="list-group list-group-light list-group-numbered">
+            
+            {% for i in category_count %}
+            <!-- <a href=""> -->
+            <form method="GET">
+               <button class="btn w-100" type="submit" name="submit" value="{{ i.category__slug }}">
+                  <li class="list-group-item border-0 d-flex justify-content-between align-items-start">
+                     <div class="ms-2 me-auto">
+                        <div class="fw-bold">{{ i.category__title }}</div>
+                     </div>
+                     <span class="badge badge-primary rounded-pill">{{ i.product }}</span>
+                  </li>
+               </button>
+            </form>
+            <!-- </a> -->
+            {% endfor %}
+               
+         </ol>
       </div>
    </div>
 
