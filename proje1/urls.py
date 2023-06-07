@@ -26,6 +26,7 @@ urlpatterns = [
     path('detay/<id>', detailPage, name='detailPage'),
     
     # USER
+    path('profile', profileUser, name='profileUser'),
     path('myproduct', myProduct, name='myProduct'),
     path('delproduct/<id>', delProduct, name='delProduct'),
     path('addproduct', addProduct, name='addProduct'),

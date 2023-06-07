@@ -50,6 +50,63 @@ def detailPage(request, id):
    return render(request, 'detail.html', context)
 
 # === USER ===
+# PROFILE
+def profileUser(request):
+   profile = UserInfo.objects.get(user=request.user)
+   user = User.objects.get(username=request.user)
+   
+   if request.method == "POST":
+      submit = request.POST.get("submit")  
+      if submit == "profileUpdate":
+         fname = request.POST.get("name")
+         lname = request.POST.get("surname")
+         email = request.POST.get("email")
+         username = request.POST.get("username")
+         address = request.POST.get("address")
+         tel = request.POST.get("tel")
+         job = request.POST.get("job")
+         image = request.FILES.get("image")
+         
+         
+         user.first_name = fname
+         user.last_name = lname
+         user.email = email
+         if not User.objects.filter(username=username).exists(): # ["qqq1"] = not True, []= not False
+            user.username = username
+            messages.success(request, "Kullanıcı adınız başarıyla değiştirildi..")
+         else:
+            messages.warning(request, "Bu kullanıcı adı zaten kullanılıyor!")
+         
+         if image is not None:
+            profile.img = image
+         profile.address = address
+         profile.tel = tel
+         profile.job = job
+
+      if submit == "passwordChange":
+         password = request.POST.get("password")
+         if user.check_password(password): # şifre kontrolü
+            password1 = request.POST.get("password1")
+            password2 = request.POST.get("password2")
+            if password1 == password2:
+               user.set_password(password1) # şifre değiştirme
+               profile.password = password1
+               login(request,user)
+               messages.success(request, "Şifreniz başarıyla değiştirildi..")
+            else:
+               messages.warning(request, "şifreler eşleşmiyor!")
+         else:
+            messages.warning(request, "şifreniz yanlış!")
+         
+      user.save()
+      profile.save()
+      return redirect('profileUser')
+      
+   context = {
+      "profile":profile,
+   }
+   return render(request,'user/profile.html', context)
+
 def myProduct(request):
    products = Product.objects.filter(user=request.user)
    if request.method == "POST":
@@ -141,6 +198,10 @@ def registerUser(request):
             if not User.objects.filter(email=email).exists():
                user = User.objects.create_user(username = username, password=password1, email=email,first_name=fname, last_name=lname )
                user.save()
+               
+               userinfo = UserInfo(user=user, password = password1)
+               userinfo.save()
+               
                messages.success(request, 'Kaydınız başarıyla oluşturuldu..')
                return redirect("loginUser")
             else:

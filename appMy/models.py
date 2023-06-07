@@ -25,6 +25,17 @@ class Product(models.Model):
    stok = models.IntegerField(("Stok"))
    price = models.FloatField(("Ürün Fiyatı"))
    
-   
    def __str__(self): # admin panelndeki isimlendirmeyi değiştirir
       return self.title
+   
+class UserInfo(models.Model):
+   user = models.ForeignKey(User, verbose_name=("Kulanıcı"), on_delete=models.CASCADE)
+   password = models.CharField(("Şifre"), max_length=50)
+   address = models.TextField(("Adres"), default="-")
+   tel = models.CharField(("Telefon"), max_length=50, default="-")
+   img = models.ImageField(("Profil Resmi"), upload_to="profile", default="profile/default-profile.png")
+   job = models.CharField(("İş"), max_length=50, default="-")
+   
+   def __str__(self):  # admin panelndeki isimlendirmeyi değiştirir
+      return self.user.username
+
