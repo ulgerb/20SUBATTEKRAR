@@ -99,7 +99,7 @@
                <div class="card-body">
                   <h5 class="card-title">{{ i.title }}</h5>
                   <p class="card-text">{{ i.text|truncatechars:50 }}</p>
-                  <p class="fw-bold fs-2"><del class="text-muted fs-4">₺{{ i.price|add:500 }}</del> ₺{{ i.price }}</p>
+                  <p class="fw-bold fs-2"><del class="text-muted fs-4">₺{{ i.oldprice }}</del> ₺{{ i.price }} <span class="btn text-success mb-2 disabled">%{{ i.discount_per }}</span></p>
                   <a href="/detay/{{ i.id }}" class="btn btn-primary">Detay</a>
                </div>
             </div>

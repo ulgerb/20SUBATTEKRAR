@@ -6,8 +6,11 @@ from django.contrib import messages
 from django.db.models import Count
 
 def indexPage(request, col=4):
+   context = {}
+   if request.user.is_authenticated: # girişliyse True değer döndürür
+      profile = UserInfo.objects.get(user=request.user)
+      context.update({"profile":profile})
    category_count = Product.objects.values('category__title','category__slug').annotate(product=Count('title'))
-   print(category_count)
    categorys = Category.objects.all()
    products = Product.objects.all() # Hepsini getir (liste bazlıdır) (for) []
    # products = Product.objects.filter() # (category=telefon) (liste bazlıdır) (for) []
@@ -32,12 +35,12 @@ def indexPage(request, col=4):
       elif filter_product == "5":
          products = products.order_by("-title")
    
-   context = { # sayfa içerisine bilgileri gönderir
+   context.update({ # sayfa içerisine bilgileri gönderir
       "products":products,
       "col":col,
       "categorys": categorys,
       "category_count": category_count,
-   }
+   })
    return render(request, 'index.html', context)
 
 
@@ -47,6 +50,8 @@ def detailPage(request, id):
    context = {
        "product": product,
    }
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
    return render(request, 'detail.html', context)
 
 # === USER ===
@@ -133,6 +138,8 @@ def myProduct(request):
    context = {
        "products": products,
    }
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
    return render(request, 'user/myproduct.html', context)
 
 def delProduct(request,id=None):
@@ -150,18 +157,25 @@ def addProduct(request):
       title = request.POST.get("title")
       price = request.POST.get("price")
       stok = request.POST.get("stok")
+      discount_per = request.POST.get("discount_per")
       text = request.POST.get("text")
       slugcate = request.POST.get("category") # telefon
       image = request.FILES.get("image")
       category = categorys.get(slug=slugcate) # id=5 slug=telefon
       
-      product = Product(title=title, price=price, stok=stok,category=category, text=text,image=image, user=request.user)
+      product = Product(title=title, price=price, stok=stok, category=category,
+                         text=text, image=image, user=request.user)
+      if discount_per:
+         product.discount_per = discount_per
       product.save()
       return redirect("indexPage")
    
    context = {
        "categorys": categorys,
    }
+   if request.user.is_authenticated:
+      context.update({"profile":UserInfo.objects.get(user=request.user)})
+      
    return render(request, 'user/add-product.html', context)
 
 def loginUser(request):
@@ -181,6 +195,8 @@ def loginUser(request):
          return redirect("loginUser")
          
    context = {}
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
    return render(request,'user/login.html',context)
 
 def registerUser(request):
@@ -215,6 +231,8 @@ def registerUser(request):
          return redirect("registerUser")
       
    context = {}
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
    return render(request,'user/register.html',context)
 
 def logoutUser(request):

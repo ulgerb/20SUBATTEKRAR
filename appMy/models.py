@@ -23,10 +23,21 @@ class Product(models.Model):
    image = models.FileField(("Ürün Resmi"), upload_to='product', max_length=100)
    date_now = models.DateField(("Tarih"), auto_now_add= True)
    stok = models.IntegerField(("Stok"))
-   price = models.FloatField(("Ürün Fiyatı"))
+   oldprice = models.FloatField(("Eski Fiyat"), null=True)
+   discount_per = models.IntegerField(("İndirim Yüzdesi"),blank=True ,null=True, default=0)
+   price = models.FloatField(("İndirimli Fiyatı"), blank=True, null=True)
+   # 1) eski ve yeni fiyat yazarız aradaki indirimi yüzdeyle hesaplatırıcaz
+   # 2) eski fiyatı ve indirim yüzdesini yazarım, yeni fiyata indirimli fiyatı yazdırırız
    
    def __str__(self): # admin panelndeki isimlendirmeyi değiştirir
       return self.title
+   
+   def save(self,*args, **kwargs):
+      if self.discount_per:
+         self.price = round(self.oldprice - ((self.oldprice * self.discount_per)/100), 2)
+      else:
+         self.price = self.oldprice
+      super().save(*args,**kwargs)
    
 class UserInfo(models.Model):
    user = models.ForeignKey(User, verbose_name=("Kulanıcı"), on_delete=models.CASCADE)
