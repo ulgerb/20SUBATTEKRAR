@@ -52,7 +52,7 @@ class UserInfo(models.Model):
       return self.user.username
 
 class Comment(models.Model):
-   user = models.ForeignKey(User, verbose_name=("Kullanıcı"), on_delete=models.CASCADE)
+   user = models.ForeignKey(UserInfo, verbose_name=("Kullanıcı"), on_delete=models.CASCADE)
    product = models.ForeignKey(Product, verbose_name=("Ürün"), on_delete=models.CASCADE)
    text = models.TextField(("Yorum"), default="")
    rating = models.IntegerField(("Yoirum Puanı"), default=5)

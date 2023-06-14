@@ -46,9 +46,27 @@ def indexPage(request, col=4):
 
 def detailPage(request, id):
    product = Product.objects.get(id=id)
-   
+   comments = Comment.objects.filter(product=product)
+   boolcom = True
+   if request.user.is_authenticated:
+      userinfo = UserInfo.objects.get(user=request.user)
+      boolcom = not Comment.objects.filter(product=product, user=userinfo).exists()
+      
+   if request.method == "POST":
+      if request.user.is_authenticated:
+         rating = request.POST.get("rating")
+         text = request.POST.get("text")
+         if rating is None:
+            rating = 5
+         
+         comment = Comment(rating=rating, text=text, user=userinfo, product=product)
+         comment.save()
+         return redirect("/detay/"+id)
+      
    context = {
        "product": product,
+       "comments": comments,
+       "boolcom": boolcom,
    }
    if request.user.is_authenticated:
       context.update({"profile": UserInfo.objects.get(user=request.user)})
