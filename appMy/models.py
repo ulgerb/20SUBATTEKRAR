@@ -57,6 +57,19 @@ class Comment(models.Model):
    text = models.TextField(("Yorum"), default="")
    rating = models.IntegerField(("Yoirum Puanı"), default=5)
    date_now = models.DateTimeField(("Tarih - Saat"), auto_now_add=True)
+   
+   def save(self,*args,**kwargs):
+      comments = Comment.objects.filter(product=self.product)
+      total_rat = 0
+      if comments.exists():
+         for i in comments:
+            total_rat += i.rating
+         self.product.rating_total = round((total_rat+int(self.rating)) / (len(comments)+1),1)
+         self.product.save()
+      else:
+         self.product.rating_total = self.rating
+         self.product.save()
+      super().save(*args,**kwargs)
 
    def __str__(self):  # admin panelndeki isimlendirmeyi değiştirir
       return self.product.title
