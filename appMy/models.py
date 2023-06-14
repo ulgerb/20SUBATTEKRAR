@@ -26,6 +26,7 @@ class Product(models.Model):
    oldprice = models.FloatField(("Eski Fiyat"), null=True)
    discount_per = models.IntegerField(("İndirim Yüzdesi"),blank=True ,null=True, default=0)
    price = models.FloatField(("İndirimli Fiyatı"), blank=True, null=True)
+   rating_total = models.FloatField(("Ürün Puanı"), default=0)
    # 1) eski ve yeni fiyat yazarız aradaki indirimi yüzdeyle hesaplatırıcaz
    # 2) eski fiyatı ve indirim yüzdesini yazarım, yeni fiyata indirimli fiyatı yazdırırız
    
@@ -34,7 +35,7 @@ class Product(models.Model):
    
    def save(self,*args, **kwargs):
       if self.discount_per:
-         self.price = round(self.oldprice - ((self.oldprice * self.discount_per)/100), 2)
+         self.price = round(float(self.oldprice) - ((float(self.oldprice) * float(self.discount_per))/100), 2)
       else:
          self.price = self.oldprice
       super().save(*args,**kwargs)
@@ -50,3 +51,12 @@ class UserInfo(models.Model):
    def __str__(self):  # admin panelndeki isimlendirmeyi değiştirir
       return self.user.username
 
+class Comment(models.Model):
+   user = models.ForeignKey(User, verbose_name=("Kullanıcı"), on_delete=models.CASCADE)
+   product = models.ForeignKey(Product, verbose_name=("Ürün"), on_delete=models.CASCADE)
+   text = models.TextField(("Yorum"), default="")
+   rating = models.IntegerField(("Yoirum Puanı"), default=5)
+   date_now = models.DateTimeField(("Tarih - Saat"), auto_now_add=True)
+
+   def __str__(self):  # admin panelndeki isimlendirmeyi değiştirir
+      return self.product.title

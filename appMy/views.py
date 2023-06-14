@@ -163,7 +163,7 @@ def addProduct(request):
       image = request.FILES.get("image")
       category = categorys.get(slug=slugcate) # id=5 slug=telefon
       
-      product = Product(title=title, price=price, stok=stok, category=category,
+      product = Product(title=title, oldprice=price, stok=stok, category=category,
                          text=text, image=image, user=request.user)
       if discount_per:
          product.discount_per = discount_per
