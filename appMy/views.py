@@ -96,16 +96,46 @@ def detailPage(request, id):
 
 def shopPage(request):
    shop = Shoping.objects.filter(user=request.user)
-
+   total_price = 0
+   
    for i in shop:
-      print(i.price)
+      total_price += i.price
+   
+   if request.method == "POST":
+      print(request.POST)
+      index = 0
+      for k,v in request.POST.items():
+         if "csrfmiddlewaretoken" not in k and "submit" not in k:
+            print(k,v)
+            if index%2 == 0:
+               shoping = shop.get(id=v)
+            elif index%2 == 1:
+               if int(shoping.product.stok) >= int(v):
+                  shoping.piece = v
+               else:
+                  messages.warning(request, shoping.product.title+' ürünün stok sayısını aştınız. max:'+ str(shoping.product.stok))
+               
+            shoping.save()
+            index +=1
+      return redirect("shopPage")
+
+      
    
    context = {
       "shop":shop,
+      "total_price": total_price,
    }
    if request.user.is_authenticated:
       context.update({"profile": UserInfo.objects.get(user=request.user)})
    return render(request, 'shoping.html',context)
+
+# ÜRÜN SİLME
+def shopDelete(request, id):
+   shoping = Shoping.objects.filter(id=id)
+   if shoping.exists():
+      shoping = shoping.get()
+   shoping.delete()
+   return redirect("shopPage")
 
 def myProduct(request):
    products = Product.objects.filter(user=request.user)

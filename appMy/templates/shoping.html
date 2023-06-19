@@ -60,45 +60,51 @@
                   <div class="row g-0">
                      <div class="col-lg-8">
                         <div class="p-5">
-                           <div class="d-flex justify-content-between align-items-center mb-5">
-                              <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                              <h6 class="mb-0 text-muted">Sepetteki ürün sayısı: {{ shop|length }}</h6>
-                           </div>
+                           <form method="POST">
+                              <div class="d-flex justify-content-between align-items-center mb-5">
+                                 <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
+                                 <button type="submit" name="submit" value="shopFrom">Sepeti Güncelle</button>
+                                 <h6 class="mb-0 text-muted">Sepetteki ürün sayısı: {{ shop|length }}</h6>
+                              </div>
                            
-                           {% for i in shop %}
-                           <hr class="my-4">
-                           <div class="row mb-4 d-flex justify-content-between align-items-center">
-                              <div class="col-md-2 col-lg-2 col-xl-2">
-                                 <img src="{{ i.product.image.url }}" style="height: 80px; object-fit: contain;" class="w-100 img-fluid rounded-3" alt="Cotton T-shirt">
+                              {% csrf_token %}
+                              {% for i in shop %}
+                              <hr class="my-4">
+                              <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                 <div class="col-md-2 col-lg-2 col-xl-2">
+                                    <img src="{{ i.product.image.url }}" style="height: 80px; object-fit: contain;" class="w-100 img-fluid rounded-3" alt="Cotton T-shirt">
+                                 </div>
+                                 <div class="col-md-3 col-lg-3 col-xl-3">
+                                    <h6 class="text-muted">Shirt</h6>
+                                    <a href="{% url 'detailPage' i.product.id %}">
+                                       <h6 class="text-black mb-0">{{ i.product.title }}</h6>
+                                    </a>
+                                 </div>
+                                 <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                    <button type="button" class="btn btn-link px-2"
+                                       onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                       <i class="fas fa-minus"></i>
+                                    </button>
+                                    
+                                    <input type="hidden" name="id{{ i.id }}" value="{{ i.id }}">
+                                    <input id="form1" min="0" name="piece{{ i.id }}" value="{{ i.piece }}" type="number"
+                                       class="form-control form-control-sm" />
+   
+                                    <button type="button" class="btn btn-link px-2"
+                                       onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                       <i class="fas fa-plus"></i>
+                                    </button>
+                                 </div>
+                                 <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                    <h6 class="mb-0">₺{{ i.price }}</h6>
+                                 </div>
+                                 <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                    <a href="{% url 'shopDelete' i.id %}" class="text-muted"><i class="fas fa-times"></i></a>
+                                 </div>
                               </div>
-                              <div class="col-md-3 col-lg-3 col-xl-3">
-                                 <h6 class="text-muted">Shirt</h6>
-                                 <a href="{% url 'detailPage' i.product.id %}">
-                                    <h6 class="text-black mb-0">{{ i.product.title }}</h6>
-                                 </a>
-                              </div>
-                              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                 <button class="btn btn-link px-2"
-                                    onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="fas fa-minus"></i>
-                                 </button>
+                              {% endfor %}
 
-                                 <input id="form1" min="0" name="quantity" value="{{ i.piece }}" type="number"
-                                    class="form-control form-control-sm" />
-
-                                 <button class="btn btn-link px-2"
-                                    onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="fas fa-plus"></i>
-                                 </button>
-                              </div>
-                              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                 <h6 class="mb-0">₺{{ i.price }}</h6>
-                              </div>
-                              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                 <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
-                              </div>
-                           </div>
-                           {% endfor %}
+                           </form>
                               
 
                            
@@ -116,7 +122,7 @@
 
                            <div class="d-flex justify-content-between mb-4">
                               <h5 class="text-uppercase">{{ shop|length }} ürün</h5>
-                              <h5>€ 132.00</h5>
+                              <h5>₺ {{ total_price }}</h5>
                            </div>
 
                            <h5 class="text-uppercase mb-3">Shipping</h5>
@@ -143,7 +149,7 @@
 
                            <div class="d-flex justify-content-between mb-5">
                               <h5 class="text-uppercase">Total price</h5>
-                              <h5>€ 137.00</h5>
+                              <h5>₺ {{ total_price }}</h5>
                            </div>
 
                            <button type="button" class="btn btn-dark btn-block btn-lg"

@@ -27,6 +27,7 @@ urlpatterns = [
     
     # PRODUCT
     path('shop', shopPage, name='shopPage'),
+    path('shop/delete/<id>', shopDelete, name='shopDelete'),
     path('myproduct', myProduct, name='myProduct'),
     path('delproduct/<id>', delProduct, name='delProduct'),
     path('addproduct', addProduct, name='addProduct'),
