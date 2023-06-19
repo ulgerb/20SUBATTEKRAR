@@ -6,5 +6,13 @@ admin.site.register(Product)
 admin.site.register(Category)
 admin.site.register(UserInfo)
 admin.site.register(Comment)
+# admin.site.register(Shoping)
+
+@admin.register(Shoping)
+class ShopingAdmin(admin.ModelAdmin):
+   '''Admin View for Shoping'''
+
+   list_display = ('product','user','piece','price')
+   
 
 # adminview

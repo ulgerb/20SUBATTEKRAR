@@ -54,13 +54,32 @@ def detailPage(request, id):
       
    if request.method == "POST":
       if request.user.is_authenticated:
-         rating = request.POST.get("rating")
-         text = request.POST.get("text")
-         if rating is None:
-            rating = 5
+         submit = request.POST.get("submit")
+         if submit == "commentForm":
+            rating = request.POST.get("rating")
+            text = request.POST.get("text")
+            if rating is None:
+               rating = 5
+            
+            comment = Comment(rating=rating, text=text, user=userinfo, product=product)
+            comment.save()
+         elif submit == "shopForm":
+            piece = request.POST.get("piece")
+            
+            if 1 <= int(piece) <= int(product.stok): 
+               if not Shoping.objects.filter(user=request.user, product=product).exists():
+                  shop = Shoping(user=request.user, product=product, piece=piece)
+               else:
+                  shop = Shoping.objects.filter(user=request.user, product=product).get()
+                  if (int(shop.piece)+int(piece)) <= int(product.stok):
+                     shop.piece += int(piece)
+                  else:
+                     messages.warning(request, 'maximum ürün adetini aştınız. ekleyebileceğiniz ürün adeti: '+str(int(product.stok)-int(shop.piece)))
+               shop.save()
+            else:
+               messages.warning(request, 'İstenilen adet değeri buunmuyor!!')
+            
          
-         comment = Comment(rating=rating, text=text, user=userinfo, product=product)
-         comment.save()
          return redirect("/detay/"+id)
       
    context = {
@@ -71,6 +90,90 @@ def detailPage(request, id):
    if request.user.is_authenticated:
       context.update({"profile": UserInfo.objects.get(user=request.user)})
    return render(request, 'detail.html', context)
+
+
+# === PRODUCT ===
+
+def shopPage(request):
+   shop = Shoping.objects.filter(user=request.user)
+
+   for i in shop:
+      print(i.price)
+   
+   context = {
+      "shop":shop,
+   }
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
+   return render(request, 'shoping.html',context)
+
+def myProduct(request):
+   products = Product.objects.filter(user=request.user)
+   if request.method == "POST":
+      # Form içerisinden bilgileri çekme
+      title = request.POST.get("title")
+      price = request.POST.get("price")
+      stok = request.POST.get("stok")
+      text = request.POST.get("text")
+      image = request.FILES.get("image")
+      # Ürünü Getirme
+      productid = request.POST.get("productid")
+      product = products.get(id=productid)  # değiştirilcek ürün
+      # Ürün değerlerini değiştirme
+      product.title = title
+      product.price = price
+      product.stok = stok
+      product.text = text
+      if image is not None:
+         product.image = image
+
+      product.save()
+      return redirect("myProduct")
+
+   context = {
+       "products": products,
+   }
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
+   return render(request, 'user/myproduct.html', context)
+
+
+def delProduct(request, id=None):
+   if id is not None:
+      product = Product.objects.get(id=id)
+      # product = get_object_or_404(Product, id=id) # ürünü getiremezse 404 sayfasına atar
+      product.delete()
+   else:
+      "hata mesajı"
+   return redirect("myProduct")
+
+
+def addProduct(request):
+   categorys = Category.objects.all()
+   if request.method == "POST":
+      title = request.POST.get("title")
+      price = request.POST.get("price")
+      stok = request.POST.get("stok")
+      discount_per = request.POST.get("discount_per")
+      text = request.POST.get("text")
+      slugcate = request.POST.get("category")  # telefon
+      image = request.FILES.get("image")
+      category = categorys.get(slug=slugcate)  # id=5 slug=telefon
+
+      product = Product(title=title, oldprice=price, stok=stok, category=category,
+                        text=text, image=image, user=request.user)
+      if discount_per:
+         product.discount_per = discount_per
+      product.save()
+      return redirect("indexPage")
+
+   context = {
+       "categorys": categorys,
+   }
+   if request.user.is_authenticated:
+      context.update({"profile": UserInfo.objects.get(user=request.user)})
+
+   return render(request, 'user/add-product.html', context)
 
 # === USER ===
 # PROFILE
@@ -130,71 +233,6 @@ def profileUser(request):
    }
    return render(request,'user/profile.html', context)
 
-def myProduct(request):
-   products = Product.objects.filter(user=request.user)
-   if request.method == "POST":
-      # Form içerisinden bilgileri çekme
-      title = request.POST.get("title")
-      price = request.POST.get("price")
-      stok = request.POST.get("stok")
-      text = request.POST.get("text")
-      image = request.FILES.get("image")
-      # Ürünü Getirme
-      productid = request.POST.get("productid")
-      product = products.get(id=productid) # değiştirilcek ürün
-      # Ürün değerlerini değiştirme
-      product.title = title
-      product.price = price
-      product.stok = stok
-      product.text = text
-      if image is not None:
-         product.image = image
-      
-      product.save()
-      return redirect("myProduct")
-   
-   context = {
-       "products": products,
-   }
-   if request.user.is_authenticated:
-      context.update({"profile": UserInfo.objects.get(user=request.user)})
-   return render(request, 'user/myproduct.html', context)
-
-def delProduct(request,id=None):
-   if id is not None:
-      product = Product.objects.get(id=id)
-      # product = get_object_or_404(Product, id=id) # ürünü getiremezse 404 sayfasına atar
-      product.delete()
-   else:
-      "hata mesajı"
-   return redirect("myProduct")
-
-def addProduct(request):
-   categorys = Category.objects.all()
-   if request.method == "POST":
-      title = request.POST.get("title")
-      price = request.POST.get("price")
-      stok = request.POST.get("stok")
-      discount_per = request.POST.get("discount_per")
-      text = request.POST.get("text")
-      slugcate = request.POST.get("category") # telefon
-      image = request.FILES.get("image")
-      category = categorys.get(slug=slugcate) # id=5 slug=telefon
-      
-      product = Product(title=title, oldprice=price, stok=stok, category=category,
-                         text=text, image=image, user=request.user)
-      if discount_per:
-         product.discount_per = discount_per
-      product.save()
-      return redirect("indexPage")
-   
-   context = {
-       "categorys": categorys,
-   }
-   if request.user.is_authenticated:
-      context.update({"profile":UserInfo.objects.get(user=request.user)})
-      
-   return render(request, 'user/add-product.html', context)
 
 def loginUser(request):
 

@@ -73,3 +73,17 @@ class Comment(models.Model):
 
    def __str__(self):  # admin panelndeki isimlendirmeyi değiştirir
       return self.product.title
+
+class Shoping(models.Model):
+   user = models.ForeignKey(User, verbose_name=("Kullanıcı"), on_delete=models.CASCADE)
+   product = models.ForeignKey(Product, verbose_name=("Ürün"), on_delete=models.CASCADE)
+   piece = models.IntegerField(("Ürün adeti"))
+   price = models.FloatField(("Ürün Sepet Fiyatı"), default=0)
+
+   def save(self, *args,**kwargs):
+      self.price = int(self.piece) * float(self.product.price)
+      self.price = round(self.price,2)
+      super().save(*args, **kwargs)
+
+   def __str__(self):  # admin panelndeki isimlendirmeyi değiştirir
+      return self.user.username

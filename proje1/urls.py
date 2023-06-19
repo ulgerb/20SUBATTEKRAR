@@ -25,11 +25,14 @@ urlpatterns = [
     path('col/<col>', indexPage, name='indexPage'),
     path('detay/<id>', detailPage, name='detailPage'),
     
-    # USER
-    path('profile', profileUser, name='profileUser'),
+    # PRODUCT
+    path('shop', shopPage, name='shopPage'),
     path('myproduct', myProduct, name='myProduct'),
     path('delproduct/<id>', delProduct, name='delProduct'),
     path('addproduct', addProduct, name='addProduct'),
+    
+    # USER
+    path('profile', profileUser, name='profileUser'),
     path('login', loginUser, name='loginUser'), # giriş
     path('logout', logoutUser, name='logoutUser'), # çıkış
     path('register', registerUser, name='registerUser'), # kayıt

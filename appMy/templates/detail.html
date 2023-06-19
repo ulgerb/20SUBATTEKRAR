@@ -97,12 +97,35 @@
       <img style="width: 100%; height: 400px; object-fit: contain;" src="{{ product.image.url }}" class="card-img-top"
          alt="Fissure in Sandstone" />
       <div class="card-body">
-         <h5 class="card-title">{{ product.title }} / puan: {{ product.rating_total }}</h5>
+         <h5 class="card-title">
+            {{ product.title }} / puan: {{ product.rating_total }}
+            
+            {% for i in '12345' %}
+               
+               {% if product.rating_total >= i|add:0 %}
+               <i class="fas fa-star fa-sm text-warning"></i>
+               
+               {% elif product.rating_total > i|add:-1 %}
+               <i class="fas fa-star-half-alt fa-sm text-warning"></i>
+               
+               {% else %}
+               <i class="far fa-star fa-sm text-warning"></i>
+                  
+               {% endif %}
+            {% endfor %}
+         </h5>
          <p class="card-text">{{ product.text }}</p>
          <p class="btn fs-2">Fiyat: {{ product.price }}</p>
          <p class="btn fs-3">Stok: {{ product.stok }}</p>
          <p class="text-muted">{{ product.date_now }}</p>
          <a href="#!" class="text-muted">TARİH</a>
+         <form class="d-flex mt-3" method="POST" action="">
+            {% csrf_token %}
+            <label class="d-flex align-items-center" for="">Adet:
+               <input class="form-control form-control-sm m-2" type="number" value="1" min="1" max="{{ product.stok }}" name="piece" id="" style="width: 100px;">
+            </label>
+            <button class="btn btn-success" name="submit" value="shopForm" type="submit" >Sepete Ekle</button>
+         </form>
       </div>
    </div>
    <div class="card">
@@ -161,7 +184,7 @@
                   <div class="row">
                      <div class="col-6">
                         <div class="pull-left">
-                           <button {% if request.user.is_authenticated and boolcom %}type="submit"{% else %}type="button" data-mdb-toggle="modal" data-mdb-target="#commitlogin"{% endif %} class="btn btn-success btn-sm" >Yorumu Paylaş</button>
+                           <button name="submit" value="commentForm" {% if request.user.is_authenticated and boolcom %}type="submit"{% else %}type="button" data-mdb-toggle="modal" data-mdb-target="#commitlogin"{% endif %} class="btn btn-success btn-sm" >Yorumu Paylaş</button>
                            <!-- Modal -->
                            <div class="modal fade" id="commitlogin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog">
